@@ -30,17 +30,45 @@ mat4 view_mat;
 mat4 proj_mat;
 mat4 model_mat;
 bool use_normal_map = false;
-GLuint vbo, vao;
+GLuint VAO, VBO;
 GLuint vertexShader, fragmentShader, shaderProgram;
 int pointCount;
 float evaluateParabolicArc(float t) { return t * t; }
+void setupBuffers(float* float_arr, int numVertices) {
+  glGenVertexArrays(1, &VAO);
+  glGenBuffers(1, &VBO);
+
+  glBindVertexArray(VAO);
+
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float), float_arr,
+               GL_STATIC_DRAW);
+
+  // Vertex Positions
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(0);
+
+  // Vertex Normals
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+                        (void*)(numVertices * sizeof(float)));
+  glEnableVertexAttribArray(1);
+
+  // Vertex Texture Coordinates
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float),
+                        (void*)(2 * numVertices * sizeof(float)));
+  glEnableVertexAttribArray(2);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindVertexArray(0);
+}
+
 void generateSurfaceOfRevolution(float* float_arr, int numYSteps,
                                  int numThetaSteps) {
   for (int i = 0; i < numYSteps; ++i) {
     float y = -1.0f + 2.0f * i / (numYSteps - 1);
 
-    for (int j = 0; j < numThetaSteps; ++j) {
-      float theta = static_cast<float>(j) / (numThetaSteps - 1) * TWO_PI;
+    for (int j = 0; j < numThetaSteps * 3; ++j) {
+      float theta = static_cast<float>(j / 3) / (numThetaSteps - 1) * TWO_PI;
       // Evaluate the base curve at the current y-coordinate
 
       // Use the evaluated point to construct the surface vertex in 3D space
@@ -76,35 +104,9 @@ void loadSurfaceOfRevolution() {
     theta_steps = atoi(buff.c_str());
   }
   float* float_arr = (float*)malloc(sizeof(float) * y_steps * theta_steps * 3);
-  pointCount = y_steps * theta_steps;
+  pointCount = y_steps * theta_steps * 3;
   generateSurfaceOfRevolution(float_arr, y_steps, theta_steps);
-
-  // VAO -- vertex attribute objects bundle the various things associated
-  // with vertices
-  glGenVertexArrays(
-      1, &vao);            // generating and binding is common pattern in OpenGL
-  glBindVertexArray(vao);  // basically setting up memory and associating it
-
-  // VBO -- vertex buffer object to contain coordinates
-  // MODIFY THE FOLLOWING BLOCK OF CODE APPRORIATELY FOR YOUR SURFACE OF
-  // REVOLUTION
-
-  // Compute and populate per-vertex normals
-
-  // VAO -- vertex attribute objects bundle the various things associated with
-  // vertices
-  glGenVertexArrays(
-      1, &vao);  // generating and binding is a common pattern in OpenGL
-  glBindVertexArray(vao);  // basically setting up memory and associating it
-
-  // VBO -- vertex buffer object to contain coordinates
-  GLuint points_vbo;
-  glGenBuffers(1, &points_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * y_steps * theta_steps * 3,
-               float_arr, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-  glEnableVertexAttribArray(0);
+  setupBuffers(float_arr, pointCount * 3);
 
   // Load textures
 
@@ -133,11 +135,6 @@ void loadUniforms(GLuint shader_programme) {
 
   // WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR ENABLING OR
   // DISABLING CERTAIN FUNCTIONALITIES
-}
-
-void drawSurfaceOfRevolution(std::vector<vec3>& surfaceVertices) {
-  // MODIFY THIS LINE OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
-  glDrawArrays(GL_TRIANGLES, 0, surfaceVertices.size());
 }
 void drawSurfaceOfRevolution() {
   // MODIFY THIS LINE OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
