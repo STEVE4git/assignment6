@@ -33,57 +33,55 @@ bool use_normal_map = false;
 GLuint VAO, VBO;
 GLuint vertexShader, fragmentShader, shaderProgram;
 int pointCount;
-float evaluateParabolicArc(float t) { return t * t; }
-void setupBuffers(float* float_arr, int numVertices) {
+float baseCurve(float t) {
+  // Example: Parametric equation for an arc
+  return 0.5 * cos(t);
+}
+void initialize(float* vertices, int numSegments, int numSlices) {
+  // Create Vertex Array Object
   glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-
   glBindVertexArray(VAO);
 
+  // Create Vertex Buffer Object
+  glGenBuffers(1, &VBO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(float), float_arr,
-               GL_STATIC_DRAW);
 
-  // Vertex Positions
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  // Generate and store the vertex data as a 1D float array
+
+  for (int i = 0; i <= numSegments; ++i) {
+    float t = (i / static_cast<float>(numSegments)) * 2.0f *
+              M_PI;  // Angle in radians
+
+    // Coordinates for the base curve
+    float x = baseCurve(t);
+    float y = 0.0;
+    float z = 0.0;
+
+    // Generate points on the surface of revolution
+    for (int j = 0; j <= numSlices; ++j) {
+      float theta = (j / static_cast<float>(numSlices)) * 2.0f *
+                    M_PI;  // Angle in radians
+
+      float newX = x * cos(theta);
+      float newY = x * sin(theta);
+      float newZ = z;
+
+      // Store the coordinates in the 1D array
+      vertices[(i * (numSlices + 1) + j) * 3] = newX;
+      vertices[(i * (numSlices + 1) + j) * 3 + 1] = newY;
+      vertices[(i * (numSlices + 1) + j) * 3 + 2] = newZ;
+    }
+  }
+
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  // Specify the layout of the vertex data
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-  // Vertex Normals
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-                        (void*)(numVertices * sizeof(float)));
-  glEnableVertexAttribArray(1);
-
-  // Vertex Texture Coordinates
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float),
-                        (void*)(2 * numVertices * sizeof(float)));
-  glEnableVertexAttribArray(2);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }
 
-void generateSurfaceOfRevolution(float* float_arr, int numYSteps,
-                                 int numThetaSteps) {
-  for (int i = 0; i < numYSteps; ++i) {
-    float y = -1.0f + 2.0f * i / (numYSteps - 1);
-
-    for (int j = 0; j < numThetaSteps * 3; ++j) {
-      float theta = static_cast<float>(j / 3) / (numThetaSteps - 1) * TWO_PI;
-      // Evaluate the base curve at the current y-coordinate
-
-      // Use the evaluated point to construct the surface vertex in 3D space
-      float r = evaluateParabolicArc(y);
-      // Use the Y-component as the radial dimension
-      float x = r * cos(theta);
-
-      float z = r * sin(theta);
-
-      float_arr[i * numThetaSteps + j] = x;
-      float_arr[i * numThetaSteps + j + 1] = r;
-      float_arr[i * numThetaSteps + j + 2] = z;
-    }
-  }
-}
 void loadSurfaceOfRevolution() {
   std::cout << "Enter the number of y steps" << std::endl;
   std::string buff;
@@ -103,10 +101,10 @@ void loadSurfaceOfRevolution() {
     std::cin >> buff;
     theta_steps = atoi(buff.c_str());
   }
-  float* float_arr = (float*)malloc(sizeof(float) * y_steps * theta_steps * 3);
-  pointCount = y_steps * theta_steps * 3;
-  generateSurfaceOfRevolution(float_arr, y_steps, theta_steps);
-  setupBuffers(float_arr, pointCount * 3);
+  float* float_arr =
+      (float*)malloc(sizeof(float) * (3 * (y_steps + 1) * (theta_steps + 1)));
+  pointCount = ((y_steps + 1) * (theta_steps + 1));
+  initialize(float_arr, y_steps, theta_steps);
 
   // Load textures
 
@@ -138,7 +136,7 @@ void loadUniforms(GLuint shader_programme) {
 }
 void drawSurfaceOfRevolution() {
   // MODIFY THIS LINE OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
-  glDrawArrays(GL_TRIANGLES, 0, pointCount);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, pointCount);
 }
 
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
