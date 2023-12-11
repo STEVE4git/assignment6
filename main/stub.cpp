@@ -16,7 +16,6 @@
 #include <time.h>
 
 #include <iostream>
-#include <vector>
 
 #include "gl_utils.h"  // Anton's opengl functions and small utilities like logs
 #include "maths_funcs.h"  // Anton's maths functions.
@@ -24,42 +23,86 @@
 
 #define _USE_MATH_DEFINES
 #define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0  // 0.017444444
-#define TWO_PI 6.28318530718
-void drawSurfaceOfRevolution();
+
 mat4 view_mat;
 mat4 proj_mat;
 mat4 model_mat;
-bool use_normal_map = false;
-GLuint VAO, VBO;
-GLuint vertexShader, fragmentShader, shaderProgram;
+GLuint vao, vbo, ebo;
 int pointCount;
-float baseCurve(float t) {
-  // Example: Parametric equation for an arc
-  return 0.5 * cos(t);
-}
-void createSurfaceOfRevolution() {
-  GLfloat* vertices = new GLfloat[pointCount * 2];
+#include <vector>
 
-  for (int i = 0; i < pointCount; ++i) {
-    float theta = 2.0 * 3.14156 * i / pointCount;
-    float x = cos(theta);
-    float y = sin(theta);
+std::vector<std::pair<float, float>> generateParabolicCurve(int ySteps) {
+  std::vector<std::pair<float, float>> curvePoints;
 
-    // Modify the y-coordinate to form a parabolic arc
-    float parabolicY = y * y;
+  for (int i = 0; i <= ySteps; ++i) {
+    float y = -1.0f + (2.0f * i / ySteps);  // Normalize y within [-1, 1]
+    float r = y * y;                        // Parabolic curve formula
 
-    vertices[i * 2] = x;
-    vertices[i * 2 + 1] = parabolicY;
+    curvePoints.push_back(std::make_pair(y, r));
   }
 
-  glGenVertexArrays(1, &VBO);
-  glBindVertexArray(VAO);
+  return curvePoints;
+}
+void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
+  std::vector<std::pair<float, float>> baseCurve =
+      generateParabolicCurve(ySteps);
 
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  // Array of points pij
+  std::vector<GLfloat> points;
 
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
+  for (int j = 0; j < thetaSteps; ++j) {
+    float theta = (2.0f * M_PI * j) / thetaSteps;
+
+    for (int i = 0; i <= ySteps; ++i) {
+      float y = baseCurve[i].first;
+      float r = baseCurve[i].second;
+      float x = r * cos(theta);
+      float z = r * sin(theta);
+
+      points.push_back(x);
+      points.push_back(y);
+      points.push_back(z);
+    }
+  }
+
+  // List of quads (break into triangles)
+  std::vector<GLuint> indices;
+
+  for (int j = 0; j < thetaSteps - 1; ++j) {
+    for (int i = 0; i < ySteps; ++i) {
+      int p0 = j * (ySteps + 1) + i;
+      int p1 = p0 + 1;
+      int p2 = (j + 1) * (ySteps + 1) + i;
+      int p3 = p2 + 1;
+
+      // First triangle
+      indices.push_back(p0);
+      indices.push_back(p1);
+      indices.push_back(p2);
+
+      // Second triangle
+      indices.push_back(p1);
+      indices.push_back(p3);
+      indices.push_back(p2);
+    }
+  }
+  int pointCount = indices.size();
+  // Now organize the points and indices into VBO and VAO
+  glGenVertexArrays(1, &vao);
+  glGenBuffers(1, &vbo);
+  glGenBuffers(1, &ebo);
+
+  glBindVertexArray(vao);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(GLfloat), points.data(),
+               GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
+               indices.data(), GL_STATIC_DRAW);
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
                         (GLvoid*)0);
   glEnableVertexAttribArray(0);
 
@@ -87,10 +130,9 @@ void loadSurfaceOfRevolution() {
     theta_steps = atoi(buff.c_str());
   }
 
-  pointCount = 200;
-  createSurfaceOfRevolution();
-
-  // Load textures
+  generateSurfaceOfRevolution(y_steps, theta_steps);
+  /*------------------------------CREATE
+   * GEOMETRY-------------------------------*/
 
   // VBO -- normals -- needed for shading calcuations
   // ADD CODE TO POPULATE AND LOAD PER-VERTEX SURFACE NORMALS
@@ -107,6 +149,9 @@ void loadSurfaceOfRevolution() {
 void loadUniforms(GLuint shader_programme) {
   /*---------------------------SET RENDERING
    * DEFAULTS---------------------------*/
+
+  // Choose vertex and fragment shaders to use as well as view and proj
+  // matrices.
   int model_mat_location = glGetUniformLocation(shader_programme, "model_mat");
   int view_mat_location = glGetUniformLocation(shader_programme, "view_mat");
   int proj_mat_location = glGetUniformLocation(shader_programme, "proj_mat");
@@ -118,13 +163,10 @@ void loadUniforms(GLuint shader_programme) {
   // WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR ENABLING OR
   // DISABLING CERTAIN FUNCTIONALITIES
 }
-void drawSurfaceOfRevolution() {
-  // MODIFY THIS LINE OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
-  glClear(GL_COLOR_BUFFER_BIT);
-  glColor3f(1.0, 1.0, 1.0);
 
-  glBindVertexArray(VAO);
-  glDrawArrays(GL_LINE_STRIP, 0, pointCount);
+void drawSurfaceOfRevolution() {
+  glBindVertexArray(vao);
+  glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);
 }
 
