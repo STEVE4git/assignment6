@@ -37,48 +37,33 @@ float baseCurve(float t) {
   // Example: Parametric equation for an arc
   return 0.5 * cos(t);
 }
-void initialize(float* vertices, int numSegments, int numSlices) {
-  // Create Vertex Array Object
-  glGenVertexArrays(1, &VAO);
-  glBindVertexArray(VAO);
+void createSurfaceOfRevolution() {
+  GLfloat* vertices = new GLfloat[pointCount * 2];
 
-  // Create Vertex Buffer Object
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  for (int i = 0; i < pointCount; ++i) {
+    float theta = 2.0 * 3.14156 * i / pointCount;
+    float x = cos(theta);
+    float y = sin(theta);
 
-  // Generate and store the vertex data as a 1D float array
+    // Modify the y-coordinate to form a parabolic arc
+    float parabolicY = y * y;
 
-  for (int i = 0; i <= numSegments; ++i) {
-    float t = (i / static_cast<float>(numSegments)) * 2.0f *
-              M_PI;  // Angle in radians
-
-    // Coordinates for the base curve
-    float x = baseCurve(t);
-    float y = 0.0;
-    float z = 0.0;
-
-    // Generate points on the surface of revolution
-    for (int j = 0; j <= numSlices; ++j) {
-      float theta = (j / static_cast<float>(numSlices)) * 2.0f *
-                    M_PI;  // Angle in radians
-
-      float newX = x * cos(theta);
-      float newY = x * sin(theta);
-      float newZ = z;
-
-      // Store the coordinates in the 1D array
-      vertices[(i * (numSlices + 1) + j) * 3] = newX;
-      vertices[(i * (numSlices + 1) + j) * 3 + 1] = newY;
-      vertices[(i * (numSlices + 1) + j) * 3 + 2] = newZ;
-    }
+    vertices[i * 2] = x;
+    vertices[i * 2 + 1] = parabolicY;
   }
 
+  glGenVertexArrays(1, &VBO);
+  glBindVertexArray(VAO);
+
+  glGenBuffers(1, &VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  // Specify the layout of the vertex data
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
+                        (GLvoid*)0);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }
 
@@ -101,10 +86,9 @@ void loadSurfaceOfRevolution() {
     std::cin >> buff;
     theta_steps = atoi(buff.c_str());
   }
-  float* float_arr =
-      (float*)malloc(sizeof(float) * (3 * (y_steps + 1) * (theta_steps + 1)));
-  pointCount = ((y_steps + 1) * (theta_steps + 1));
-  initialize(float_arr, y_steps, theta_steps);
+
+  pointCount = 200;
+  createSurfaceOfRevolution();
 
   // Load textures
 
@@ -136,7 +120,12 @@ void loadUniforms(GLuint shader_programme) {
 }
 void drawSurfaceOfRevolution() {
   // MODIFY THIS LINE OF CODE APPRORIATELY FOR YOUR SURFACE OF REVOLUTION
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, pointCount);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glColor3f(1.0, 1.0, 1.0);
+
+  glBindVertexArray(VAO);
+  glDrawArrays(GL_LINE_STRIP, 0, pointCount);
+  glBindVertexArray(0);
 }
 
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
