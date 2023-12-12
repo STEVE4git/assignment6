@@ -139,6 +139,8 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
                         (GLvoid*)0);
   glEnableVertexAttribArray(2);
+  for (int i = 0; i < texCoords.size(); ++i)
+    std::cout << texCoords[i] << std::endl;
 }
 
 void loadSurfaceOfRevolution() {
@@ -162,6 +164,7 @@ void loadSurfaceOfRevolution() {
   }
 
   generateSurfaceOfRevolution(y_steps, theta_steps);
+  glBindTexture(GL_TEXTURE_2D, tex00);
   /*------------------------------CREATE
    * GEOMETRY-------------------------------*/
 

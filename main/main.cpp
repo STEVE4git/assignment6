@@ -98,7 +98,6 @@ int main(int argc, char* argv[]) {
   glUniform1i(tex00location, 0);
   glActiveTexture(GL_TEXTURE0);
   assert(load_texture(argv[3], &tex00));
-  glBindTexture(GL_TEXTURE_2D, tex00);
 
   GLuint tex01;
   int tex01location = glGetUniformLocation(shader_programme, "texture01");
