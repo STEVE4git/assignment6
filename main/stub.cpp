@@ -52,6 +52,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   std::vector<GLfloat> points;
   std::vector<GLfloat> normals;
 
+  std::vector<GLfloat> texCoords;
   for (int j = 0; j < thetaSteps; ++j) {
     float theta = (2.0f * M_PI * j) / thetaSteps;
 
@@ -61,6 +62,11 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
       float x = r * cos(theta);
       float z = r * sin(theta);
       vec3 normal = normalise(vec3(x, y, z));
+      float u = static_cast<float>(j) / (thetaSteps - 1);
+      float v = 1.0f - static_cast<float>(i) / ySteps;
+
+      texCoords.push_back(u);
+      texCoords.push_back(v);
 
       // Add the normal to the normals vector
       normals.push_back(normal.v[0]);
@@ -123,6 +129,16 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
                         (GLvoid*)0);
   glEnableVertexAttribArray(1);
+  GLuint texCoords_vbo;
+  glGenBuffers(1, &texCoords_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, texCoords_vbo);
+  glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(GLfloat),
+               texCoords.data(), GL_STATIC_DRAW);
+
+  // Vertex attribute pointers for texture coordinates
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
+                        (GLvoid*)0);
+  glEnableVertexAttribArray(2);
 }
 
 void loadSurfaceOfRevolution() {
