@@ -75,10 +75,10 @@ int main (int argc, char *argv[]) {
 /*--------------------------------START OPENGL--------------------------------*/
 	assert (restart_gl_log ());
 	assert (start_gl ());        // Start glfw window with GL context within.
+        glfwSetKeyCallback(g_window, keyboardFunction);
 
-	glfwSetKeyCallback(g_window, keyboardFunction);
-
-/*------------------------------CREATE GEOMETRY-------------------------------*/
+        /*------------------------------CREATE
+         * GEOMETRY-------------------------------*/
 	loadSurfaceOfRevolution();
 
 /*-------------------------------CREATE SHADERS-------------------------------*/

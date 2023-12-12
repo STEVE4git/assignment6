@@ -94,7 +94,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
       indices.push_back(p2);
     }
   }
-  int pointCount = indices.size();
+  pointCount = indices.size();
   // Now organize the points and indices into VBO and VAO
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
@@ -176,8 +176,10 @@ void loadUniforms(GLuint shader_programme) {
   glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, proj_mat.m);
   glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, model_mat.m);
   // Set light and view positions
-  glUniform3f(glGetUniformLocation(shader_programme, "lightPos"), 0, 0, 0);
-  glUniform3f(glGetUniformLocation(shader_programme, "viewPos"), 0, 0, 0);
+  glUniform3f(glGetUniformLocation(shader_programme, "lightPos"), cam_pos.v[0],
+              cam_pos.v[1], cam_pos.v[2]);
+  glUniform3f(glGetUniformLocation(shader_programme, "viewPos"), cam_pos.v[0],
+              cam_pos.v[1], cam_pos.v[2]);
 
   // Set other parameters (e.g., ambientStrength, specularStrength, shininess)
   glUniform1f(glGetUniformLocation(shader_programme, "ambientStrength"), 0.1);
