@@ -62,7 +62,7 @@ bool load_texture(const char* file_name, GLuint* tex);
 | argv[3]: First Texture Filename (third argument at command-line)             |
 | argv[4]: Second Texture Filename(optional fourth argument at command-line)   |
 |******************************************************************************/
-
+unsigned int tex00;
 int main(int argc, char* argv[]) {
   if (argc < 4) {
     printf(
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
   /*-------------------------------SETUP
    * TEXTURES-------------------------------*/
   // load textures
-  GLuint tex00;
+
   int tex00location = glGetUniformLocation(shader_programme, "texture00");
   glUniform1i(tex00location, 0);
   glActiveTexture(GL_TEXTURE0);

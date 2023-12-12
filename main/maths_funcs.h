@@ -65,6 +65,7 @@ struct vec3 {
   float v[3];
 };
 extern vec3 cam_pos;
+extern unsigned int tex00;
 struct vec4 {
   vec4();
   vec4(float x, float y, float z, float w);
