@@ -1,19 +1,34 @@
 #version 410
 
+in vec3 FragPos; // Received from the vertex shader
+in vec3 Normal;  // Received from the vertex shader
 
-// Define INPUTS from fragment shader
-uniform mat4 view_mat;
+uniform vec3 lightPos;    // Light position
+uniform vec3 viewPos;     // Camera position (viewer position)
 
+uniform vec3 lightColor = vec3(1.0, 1.0, 1.0);  // Light color
+uniform float ambientStrength = 0.1;              // Ambient light strength
+uniform float specularStrength = 0.5;             // Specular reflection strength
+uniform float shininess = 32.0;                   // Specular shininess exponent
 
-// These come from the VAO for texture coordinates.
-//in vec2 texture_coords;
+out vec4 fragment_color; // RGBA color
 
-// And from the uniform outputs for the textures setup in main.cpp.
-uniform sampler2D texture00;
-uniform sampler2D texture01;
+void main() {
+    // Ambient lighting
+    vec3 ambient = ambientStrength * lightColor;
 
-out vec4 fragment_color; //RGBA color
-void main () {
+    // Diffuse lighting
+    vec3 norm = normalize(Normal);
+    vec3 lightDir = normalize(lightPos - FragPos);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor;
 
-fragment_color = vec4(1.0,0.5,0.0,1.0);
+    // Specular reflection
+    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 specular = specularStrength * spec * lightColor;
+
+    vec3 result = ambient + diffuse + specular;
+    fragment_color = vec4(result, 1.0);
 }

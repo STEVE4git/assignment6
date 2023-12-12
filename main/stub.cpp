@@ -29,6 +29,7 @@ mat4 proj_mat;
 mat4 model_mat;
 GLuint vao, vbo, ebo;
 int pointCount;
+GLuint normals_vbo;
 #include <vector>
 
 std::vector<std::pair<float, float>> generateParabolicCurve(int ySteps) {
@@ -49,6 +50,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
 
   // Array of points pij
   std::vector<GLfloat> points;
+  std::vector<GLfloat> normals;
 
   for (int j = 0; j < thetaSteps; ++j) {
     float theta = (2.0f * M_PI * j) / thetaSteps;
@@ -58,6 +60,12 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
       float r = baseCurve[i].second;
       float x = r * cos(theta);
       float z = r * sin(theta);
+      vec3 normal = normalise(vec3(x, y, z));
+
+      // Add the normal to the normals vector
+      normals.push_back(normal.v[0]);
+      normals.push_back(normal.v[1]);
+      normals.push_back(normal.v[2]);
 
       points.push_back(x);
       points.push_back(y);
@@ -108,6 +116,13 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
+  glGenBuffers(1, &normals_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, normals_vbo);
+  glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat),
+               normals.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
+                        (GLvoid*)0);
+  glEnableVertexAttribArray(1);
 }
 
 void loadSurfaceOfRevolution() {
@@ -152,6 +167,7 @@ void loadUniforms(GLuint shader_programme) {
 
   // Choose vertex and fragment shaders to use as well as view and proj
   // matrices.
+
   int model_mat_location = glGetUniformLocation(shader_programme, "model_mat");
   int view_mat_location = glGetUniformLocation(shader_programme, "view_mat");
   int proj_mat_location = glGetUniformLocation(shader_programme, "proj_mat");
@@ -159,6 +175,14 @@ void loadUniforms(GLuint shader_programme) {
   glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view_mat.m);
   glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, proj_mat.m);
   glUniformMatrix4fv(model_mat_location, 1, GL_FALSE, model_mat.m);
+  // Set light and view positions
+  glUniform3f(glGetUniformLocation(shader_programme, "lightPos"), 0, 0, 0);
+  glUniform3f(glGetUniformLocation(shader_programme, "viewPos"), 0, 0, 0);
+
+  // Set other parameters (e.g., ambientStrength, specularStrength, shininess)
+  glUniform1f(glGetUniformLocation(shader_programme, "ambientStrength"), 0.1);
+  glUniform1f(glGetUniformLocation(shader_programme, "specularStrength"), 0.5);
+  glUniform1f(glGetUniformLocation(shader_programme, "shininess"), 32.0);
 
   // WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR ENABLING OR
   // DISABLING CERTAIN FUNCTIONALITIES
