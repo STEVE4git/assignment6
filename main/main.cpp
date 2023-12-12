@@ -98,8 +98,13 @@ int main(int argc, char* argv[]) {
   glUniform1i(tex00location, 0);
   glActiveTexture(GL_TEXTURE0);
   assert(load_texture(argv[3], &tex00));
-  glBindTexture(GL_TEXTURE_2D, tex00);
-
+  GLuint diffuseTexture;
+  int diffuseTexLocation =
+      glGetUniformLocation(shader_programme, "diffuseTexture");
+  glUniform1i(diffuseTexLocation, 0);  // Use texture unit 1 instead of 0
+  glActiveTexture(GL_TEXTURE1);  // Use GL_TEXTURE1 for the current texture
+  load_texture(argv[3], &diffuseTexture);
+  glBindTexture(GL_TEXTURE_2D, diffuseTexture);
   GLuint tex01;
   int tex01location = glGetUniformLocation(shader_programme, "texture01");
   glUniform1i(tex01location, 1);
