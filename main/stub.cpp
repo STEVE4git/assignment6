@@ -203,9 +203,9 @@ void loadUniforms(GLuint shader_programme) {
   glUniform1f(glGetUniformLocation(shader_programme, "shininess"), 32.0);
   glUniform3f(glGetUniformLocation(shader_programme, "lightColor"), 3.0f, 2.0f,
               3.0f);
-  glUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
-  // WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR
-  // ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
+  // lUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
+  //  WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR
+  //  ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
 }
 
 void drawSurfaceOfRevolution() {
