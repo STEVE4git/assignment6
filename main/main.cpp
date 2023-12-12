@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
   /*-------------------------------SETUP
    * TEXTURES-------------------------------*/
   // load textures
-
+  glEnable(GL_TEXTURE_2D);
   int tex00location = glGetUniformLocation(shader_programme, "texture00");
   glUniform1i(tex00location, 0);
   glActiveTexture(GL_TEXTURE0);
