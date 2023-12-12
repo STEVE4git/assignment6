@@ -13,7 +13,7 @@ uniform float shininess = 32.0;
 
 out vec4 fragment_color;
 
-uniform sampler2D diffuseTexture; // New uniform for the diffuse albedo texture
+uniform sampler2D texture00; // New uniform for the diffuse albedo texture
 
 void main() {
     // Ambient lighting
@@ -32,7 +32,7 @@ vec3 diffuse = diff * lightColor;
     vec3 specular = specularStrength * spec * lightColor;
 
     // Sample the texture
-    vec3 textureColor = texture(diffuseTexture, TexCoord).xyz;
+    vec3 textureColor = texture(texture00, TexCoord).xyz;
 
     // Final color calculation
     vec3 result = ambient + (diffuse * textureColor) + specular;
