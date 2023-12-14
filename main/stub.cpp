@@ -211,11 +211,7 @@ void loadUniforms(GLuint shader_programme) {
   glBindTexture(GL_TEXTURE_2D, tex00);
   glUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
   int success = 0;
-  glGetShaderiv(shader_programme, GL_COMPILE_STATUS, &success);
-  if (success == GL_FALSE) {
-    std::cout << "shader failed" << std::endl;
-    exit(1);
-  }
+
   // lUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
   //  WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR
   //  ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
