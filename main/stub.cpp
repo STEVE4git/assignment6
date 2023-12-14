@@ -138,8 +138,9 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
                texCoords.data(), GL_STATIC_DRAW);
 
   // Vertex attribute pointers for texture coordinates
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
-                        (GLvoid*)0);
+
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                        (void*)(6 * sizeof(float)));
   glEnableVertexAttribArray(2);
 }
 
