@@ -257,7 +257,7 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
   }
   // Change light position
   if (key == GLFW_KEY_L && action == GLFW_PRESS) {
-    lightPos.v[0] += 0.1f;
+    lightPos.v[0] += 1.0f;
   }
 
   // Change specular exponent
