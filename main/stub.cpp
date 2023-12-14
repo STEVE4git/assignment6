@@ -71,7 +71,6 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
       vec3 normal = normalise(vec3(x, y, z));
       float u = static_cast<float>(j) / (thetaSteps - 1);
       float v = 1.0f - static_cast<float>(i) / ySteps;
-      std::cout << u << "," << v << std::endl;
       texCoords.push_back(u);
       texCoords.push_back(v);
 
