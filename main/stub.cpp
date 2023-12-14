@@ -61,7 +61,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
       float r = baseCurve[i].second;
       float x = r * cos(theta);
       float z = r * sin(theta);
-      if (z < 0) continue;
+      if (y < -1) continue;
 
       vec3 normal = normalise(vec3(x, y, z));
       float u = static_cast<float>(j) / (thetaSteps - 1);
