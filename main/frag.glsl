@@ -23,7 +23,7 @@ void main() {
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-vec3 diffuse = diff * lightColor;
+    vec3 diffuse = diff * lightColor;
 
     // Specular reflection
     vec3 viewDir = normalize(viewPos - FragPos);
