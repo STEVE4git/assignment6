@@ -141,8 +141,6 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
                         (GLvoid*)0);
   glEnableVertexAttribArray(2);
-  for (int i = 0; i < texCoords.size(); ++i)
-    std::cout << texCoords[i] << std::endl;
 }
 
 void loadSurfaceOfRevolution() {
@@ -229,6 +227,11 @@ void drawSurfaceOfRevolution() {
   glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, 0);
   glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, (void*)1);
   glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, (void*)2);
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    std::cout << error << std::endl;
+    exit(1);
+  }
 }
 
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
