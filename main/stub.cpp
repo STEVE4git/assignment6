@@ -230,6 +230,7 @@ void drawSurfaceOfRevolution() {
   GLenum error = glGetError();
   if (error != GL_NO_ERROR) {
     std::cout << error << std::endl;
+    std::cout << gluErrorString() << std::endl;
     exit(1);
   }
 }
