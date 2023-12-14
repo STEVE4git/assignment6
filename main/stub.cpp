@@ -222,6 +222,13 @@ void drawSurfaceOfRevolution() {
   glBindVertexArray(0);
   glBindVertexArray(1);
   glBindVertexArray(2);
+  int width, height, nrChannels;
+  unsigned char* data = stbi_load("atlas.jpg", &width, &height, &nrChannels, 0);
+  if (data) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+  }
   glBindVertexArray(vbo);
   glBindVertexArray(ebo);
   glActiveTexture(GL_TEXTURE0);
