@@ -216,8 +216,12 @@ void loadUniforms(GLuint shader_programme) {
 
 void drawSurfaceOfRevolution() {
   glBindVertexArray(vao);
-  glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);
+  glBindVertexArray(1);
+  glBindVertexArray(2);
+  glBindVertexArray(vbo);
+  glBindVertexArray(ebo);
+  glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, 0);
 }
 
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
