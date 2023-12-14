@@ -221,7 +221,11 @@ void drawSurfaceOfRevolution() {
   glBindVertexArray(2);
   glBindVertexArray(vbo);
   glBindVertexArray(ebo);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, tex00);
   glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, (void*)1);
+  glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, (void*)2);
 }
 
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
