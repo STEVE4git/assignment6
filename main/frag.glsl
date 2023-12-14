@@ -20,13 +20,13 @@ void main() {
     vec3 ambient = ambientStrength * lightColor;
 
     // Diffuse lighting
-    vec3 norm = normalise(Normal);
-    vec3 lightDir = normalise(lightPos - FragPos);
+    vec3 norm = normalize(Normal);
+    vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
 vec3 diffuse = diff * lightColor;
 
-    // Specular reflection. actual cancer, this british spelling cost me hours
-    vec3 viewDir = normalise(viewPos - FragPos);
+    // Specular reflection
+    vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
     vec3 specular = specularStrength * spec * lightColor;
@@ -35,6 +35,6 @@ vec3 diffuse = diff * lightColor;
     vec3 textureColor = texture(texture00, TexCoord).xyz;
 
     // Final color calculation
-    vec3 result = ambient + (diffuse * textureColor) + specular;
+    vec3 result = textureColor;
     fragment_color = vec4(result, 1.0);
 }
