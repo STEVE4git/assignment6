@@ -23,7 +23,12 @@
 
 #define _USE_MATH_DEFINES
 #define ONE_DEG_IN_RAD (2.0 * M_PI) / 360.0  // 0.017444444
-
+vec3 lightPos = vec3(0.0f, 1.0f, 2.0f);      // Initial light position
+float shininess = 32.0f;                     // Initial specular exponent
+bool enableDiffuseShading = true;    // Initial state for diffuse shading
+bool enableSpecularLighting = true;  // Initial state for specular lighting
+bool useTexture = true;              // Initial state for texture usage
+bool useSecondTexture = false;
 mat4 view_mat;
 mat4 proj_mat;
 mat4 model_mat;
@@ -201,12 +206,26 @@ void loadUniforms(GLuint shader_programme) {
               cam_pos.v[1], cam_pos.v[2]);
 
   // Set other parameters (e.g., ambientStrength, specularStrength, shininess)
-  glUniform1f(glGetUniformLocation(shader_programme, "ambientStrength"), 0.1);
-  glUniform1f(glGetUniformLocation(shader_programme, "specularStrength"), 0.5);
-  glUniform1f(glGetUniformLocation(shader_programme, "shininess"), 32.0);
-  glUniform3f(glGetUniformLocation(shader_programme, "lightColor"), 3.0f, 2.0f,
-              3.0f);
+  // Set light position
+  glUniform3f(glGetUniformLocation(shader_programme, "lightPos"), lightPos.v[0],
+              lightPos.v[1], lightPos.v[2]);
 
+  // Set specular exponent
+  glUniform1f(glGetUniformLocation(shader_programme, "shininess"), shininess);
+
+  // Enable/disable diffuse shading
+  glUniform1i(glGetUniformLocation(shader_programme, "enableDiffuseShading"),
+              enableDiffuseShading);
+
+  // Enable/disable specular lighting
+  glUniform1i(glGetUniformLocation(shader_programme, "enableSpecularLighting"),
+              enableSpecularLighting);
+
+  // Enable/disable texture usage
+  glUniform1i(glGetUniformLocation(shader_programme, "useTexture"), useTexture);
+
+  glUniform1i(glGetUniformLocation(shader_programme, "useNormalMap"),
+              useSecondTexture);
   //  WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR
   //  ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
 }
@@ -236,5 +255,32 @@ void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
   if (GLFW_PRESS == glfwGetKey(g_window, GLFW_KEY_ESCAPE)) {
     // Close window when esacape is pressed
     glfwSetWindowShouldClose(g_window, 1);
+  }
+  // Change light position
+  if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+    lightPos.v[0] += 0.1f;
+  }
+
+  // Change specular exponent
+  if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+    shininess += 5.0f;
+  }
+
+  // Toggle diffuse shading
+  if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+    enableDiffuseShading = !enableDiffuseShading;
+  }
+
+  // Toggle specular lighting
+  if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+    enableSpecularLighting = !enableSpecularLighting;
+  }
+
+  // Toggle texture usage
+  if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+    useTexture = !useTexture;
+  }
+  if (key == GLFW_KEY_U && action == GLFW_PRESS) {
+    useSecondTexture = !useSecondTexture;
   }
 }
