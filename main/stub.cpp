@@ -142,6 +142,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
                         (GLvoid*)0);
   glEnableVertexAttribArray(2);
+  glEnable(GL_TEXTURE_2D);
 }
 
 void loadSurfaceOfRevolution() {
