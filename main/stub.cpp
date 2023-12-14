@@ -210,6 +210,12 @@ void loadUniforms(GLuint shader_programme) {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex00);
   glUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
+  int success = 0;
+  glGetShaderiv(shader_programme, GL_COMPILE_STATUS, &success);
+  if (success == GL_FALSE) {
+    std::cout << "shader failed" << std::endl;
+    exit(1);
+  }
   // lUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
   //  WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR
   //  ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
@@ -230,9 +236,9 @@ void drawSurfaceOfRevolution() {
   GLenum error = glGetError();
   if (error != GL_NO_ERROR) {
     std::cout << error << std::endl;
-    std::cout << gluErrorString(error) << std::endl;
-    exit(1);
+    // exit(1);
   }
+  GLint success = 0;
 }
 
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
