@@ -167,6 +167,7 @@ int main(int argc, char* argv[]) {
     // load uniform variables for shaders
     // YOU HAVE TO IMPLEMENT THIS FUNCTION IN stub.cpp
     loadUniforms(shader_programme);
+    loadSurfaceOfRevolution();
 
     // The following function will actually draw your previously
     // dispatched/loaded Surface of Revolution YOU HAVE TO IMPLEMENT THIS
