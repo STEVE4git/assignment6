@@ -23,7 +23,7 @@ void main() {
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor;
+vec3 diffuse = diff * lightColor;
 
     // Specular reflection
     vec3 viewDir = normalize(viewPos - FragPos);
@@ -36,5 +36,5 @@ void main() {
 
     // Final color calculation
     vec3 result = ambient + (diffuse * textureColor) + specular;
-    fragment_color = vec4(1, 0, 0, 0);
+    fragment_color = vec4(result, 1.0);
 }
