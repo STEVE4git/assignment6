@@ -142,7 +142,6 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
                         (GLvoid*)0);
   glEnableVertexAttribArray(2);
-  glEnable(GL_TEXTURE_2D);
 }
 
 void loadSurfaceOfRevolution() {
@@ -207,9 +206,7 @@ void loadUniforms(GLuint shader_programme) {
   glUniform1f(glGetUniformLocation(shader_programme, "shininess"), 32.0);
   glUniform3f(glGetUniformLocation(shader_programme, "lightColor"), 3.0f, 2.0f,
               3.0f);
-  int success = 0;
 
-  // lUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
   //  WRITE CODE TO LOAD OTHER UNIFORM VARIABLES LIKE FLAGS FOR
   //  ENABLING OR DISABLING CERTAIN FUNCTIONALITIES
 }
@@ -219,20 +216,9 @@ void drawSurfaceOfRevolution() {
   glBindVertexArray(0);
   glBindVertexArray(1);
   glBindVertexArray(2);
-  int width, height, nrChannels;
-  glBindVertexArray(vbo);
-  glBindVertexArray(ebo);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex00);
   glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, 0);
   glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, (void*)1);
   glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, (void*)2);
-  GLenum error = glGetError();
-  if (error != GL_NO_ERROR) {
-    // std::cout << error << std::endl;
-    // exit(1);
-  }
-  GLint success = 0;
 }
 
 void keyboardFunction(GLFWwindow* window, int key, int scancode, int action,
