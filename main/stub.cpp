@@ -167,6 +167,7 @@ void loadSurfaceOfRevolution() {
 
   generateSurfaceOfRevolution(y_steps, theta_steps);
   glBindTexture(GL_TEXTURE_2D, tex00);
+  glGenerateMipmap(GL_TEXTURE_2D);
   /*------------------------------CREATE
    * GEOMETRY-------------------------------*/
 
