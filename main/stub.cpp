@@ -239,7 +239,7 @@ void drawSurfaceOfRevolution() {
   glDrawElements(GL_TRIANGLES, pointCount, GL_UNSIGNED_INT, (void*)2);
   GLenum error = glGetError();
   if (error != GL_NO_ERROR) {
-    std::cout << error << std::endl;
+    // std::cout << error << std::endl;
     // exit(1);
   }
   GLint success = 0;
