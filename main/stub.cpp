@@ -106,7 +106,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   // Now organize the points and indices into VBO and VAO
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
-  glGenBuffers(1, &ebo);
+  // glGenBuffers(1, &ebo);
 
   glBindVertexArray(vao);
 
@@ -114,7 +114,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(GLfloat), points.data(),
                GL_STATIC_DRAW);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
                indices.data(), GL_STATIC_DRAW);
 
@@ -165,8 +165,6 @@ void loadSurfaceOfRevolution() {
   }
 
   generateSurfaceOfRevolution(y_steps, theta_steps);
-  glBindTexture(GL_TEXTURE_2D, tex00);
-  glGenerateMipmap(GL_TEXTURE_2D);
   /*------------------------------CREATE
    * GEOMETRY-------------------------------*/
 
@@ -215,7 +213,6 @@ void loadUniforms(GLuint shader_programme) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex00);
   glUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
   int success = 0;
 

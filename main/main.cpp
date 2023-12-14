@@ -171,7 +171,6 @@ int main(int argc, char* argv[]) {
     // The following function will actually draw your previously
     // dispatched/loaded Surface of Revolution YOU HAVE TO IMPLEMENT THIS
     // FUNCTION IN stub.cpp
-    glBindTexture(GL_TEXTURE_2D, tex00);
     drawSurfaceOfRevolution();
 
     // update other events like input handling
