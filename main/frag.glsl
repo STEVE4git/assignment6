@@ -36,5 +36,5 @@ void main() {
 
     // Final color calculation
     vec3 result = ambient + (diffuse * textureColor) + specular;
-    fragment_color = vec4(textureColor, 1.0);
+    fragment_color = vec4(1, 0, 0, 0);
 }
