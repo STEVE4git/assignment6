@@ -207,14 +207,6 @@ void loadUniforms(GLuint shader_programme) {
   glUniform1f(glGetUniformLocation(shader_programme, "shininess"), 32.0);
   glUniform3f(glGetUniformLocation(shader_programme, "lightColor"), 3.0f, 2.0f,
               3.0f);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glBindTexture(GL_TEXTURE_2D, tex00);
-  glGenerateMipmap(GL_TEXTURE_2D);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glActiveTexture(GL_TEXTURE0);
-  glUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
   int success = 0;
 
   // lUniform1i(glGetUniformLocation(shader_programme, "texture00"), 0);
