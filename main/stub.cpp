@@ -106,7 +106,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   // Now organize the points and indices into VBO and VAO
   glGenVertexArrays(1, &vao);
   glGenBuffers(1, &vbo);
-  // glGenBuffers(1, &ebo);
+  glGenBuffers(1, &ebo);
 
   glBindVertexArray(vao);
 
@@ -114,7 +114,7 @@ void generateSurfaceOfRevolution(int ySteps, int thetaSteps) {
   glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(GLfloat), points.data(),
                GL_STATIC_DRAW);
 
-  // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
                indices.data(), GL_STATIC_DRAW);
 
